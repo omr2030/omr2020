@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport " content="width=device-width, initial-scale=1.0">
+    <title>نظام فودافون - إدخال بيانات العملاء مع رفع المستندات</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e60012, #ffffff);
+            min-height: 100vh;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: #e60012;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(230, 0, 18, 0.3);
+        }
+
+        .logo {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .nav-bar {
+            background: #333;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .nav-bar.show {
+            display: block;
+        }
+
+        .nav-btn {
+            background: #e60012;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: #c5000f;
+            transform: translateY(-2px);
+        }
+
+        .user-info {
+            float: left;
+            color: white;
+            font-size: 14px;
+        }
+
+        .login-form, .employee-panel, .admin-panel {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .login-form.show, .employee-panel.show, .admin-panel.show {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #e60012;
+        }
+
+        .btn {
+            background: #e60012;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            background: #c5000f;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #666;
+        }
+
+        .btn-secondary:hover {
+            background: #555;
+        }
+
+        .btn-success {
+            background: #28a745;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-info {
+            background: #17a2b8;
+        }
+
+        .btn-info:hover {
+            background: #138496;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .data-table th, .data-table td {
+            padding: 12px;
+            text-align: right;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .data-table th {
+            background: #e60012;
+            color: white;
+            font-weight: bold;
+        }
+
+        .data-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .data-table tr:hover {
+            background: #e9ecef;
+        }
+
+        .status-pending {
+            color: #ffc107;
+            font-weight: bold;
+        }
+
+        .status-approved {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .status-rejected {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .alert {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .search-filter {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 15px;
+            align-items: end;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .file-upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            background: #f8f9fa;
+            transition: all 0.3s;
+        }
+
+        .file-upload-area:hover {
+            border-color: #e60012;
+            background: #fff;
+        }
+
+        .file-upload-area.dragover {
+            border-color: #e60012;
+            background: #fff5f5;
+        }
+
+        .file-list {
+            margin-top: 15px;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-icon {
+            font-size: 20px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .instructions-panel {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 2px solid #e60012;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(230, 0, 18, 0.1);
+        }
+
+        .instructions-title {
+            color: #e60012;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 2px solid #e60012;
+            padding-bottom: 10px;
+        }
+
+        .instruction-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #e60012;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .instruction-item h4 {
+            color: #e60012;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .instruction-item ul {
+            margin-right: 20px;
+            color: #333;
+        }
+
+        .instruction-item li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .highlight-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            color: #856404;
+        }
+
+        .warning-box {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            color: #721c24;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            color: #155724;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            color: #aaa;
+            float: left;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #e60012;
+        }
+
+        .document-viewer {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .document-viewer img {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .filter-row {
+                flex-direction: column;
+            }
+            
+            .data-table {
+                font-size: 14px;
+            }
+            
+            .data-table th, .data-table td {
+                padding: 8px;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 2% auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">📱 فودافون</div>
+            <p>نظام إدخال بيانات العملاء مع رفع المستندات</p>
+        </div>
+
+        <!-- Navigation Bar -->
+        <div class="nav-bar" id="navBar">
+            <div class="user-info" id="userInfo"></div>
+            <button class="nav-btn" onclick="showEmployeePanel()">إدخال بيانات العميل</button>
+            <button class="nav-btn" onclick="showAdminPanel()" id="adminBtn" style="display: none;">لوحة الإدارة</button>
+            <button class="nav-btn" onclick="showInstructions()">إرشادات الموقع</button>
+            <button class="nav-btn" onclick="logout()">تسجيل الخروج</button>
+        </div>
+
+        <!-- Instructions Panel -->
+        <div class="instructions-panel" id="instructionsPanel" style="display: none;">
+            <div class="instructions-title">📋 إرشادات استخدام نظام فودافون</div>
+            
+            <div class="instruction-item">
+                <h4>🔐 تسجيل الدخول</h4>
+                <ul>
+                    <li><strong>للإدارة:</strong> اسم المستخدم: admin | كلمة المرور: admin456</li>
+                    <li><strong>للموظفين:</strong> يتم إنشاء حسابات الموظفين من قبل المدير العام</li>
+                    <li>تأكد من إدخال البيانات بشكل صحيح</li>
+                    <li>في حالة نسيان كلمة المرور، تواصل مع المدير العام</li>
+                </ul>
+            </div>
+
+            <div class="instruction-item">
+                <h4>📝 إدخال بيانات العميل</h4>
+                <ul>
+                    <li>املأ جميع الحقول المطلوبة بدقة</li>
+                    <li>الرقم القومي يجب أن يكون 14 رقم بالضبط</li>
+                    <li>رقم الهاتف يجب أن يبدأ بـ 01 ويتكون من 11 رقم</li>
+                    <li>اختر نوع الخدمة المناسب من القائمة</li>
+                </ul>
+                <div class="warning-box">
+                    <strong>تنبيه:</strong> لا يمكن تسجيل نفس الرقم القومي أكثر من مرة
+                </div>
+            </div>
+
+            <div class="instruction-item">
+                <h4>📎 رفع المستندات والبطاقات</h4>
+                <ul>
+                    <li>يمكن رفع حتى 5 ملفات كحد أقصى</li>
+                    <li>الحد الأقصى لحجم الملف الواحد: 5 ميجابايت</li>
+                    <li>الصيغ المدعومة: JPG, PNG, PDF, DOC, DOCX</li>
+                    <li>يمكن سحب وإفلات الملفات أو الضغط لاختيارها</li>
+                </ul>
+                <div class="highlight-box">
+                    <strong>نصيحة:</strong> تأكد من وضوح الصور وجودة المستندات قبل الرفع
+                </div>
+            </div>
+
+            <div class="instruction-item">
+                <h4>👨‍💼 لوحة الإدارة (للمديرين فقط)</h4>
+                <ul>
+                    <li>عرض جميع طلبات العملاء</li>
+                    <li>البحث والتصفية حسب الاسم أو الرقم القومي</li>
+                    <li>قبول أو رفض الطلبات</li>
+                    <li>عرض المستندات المرفقة</li>
+                    <li>متابعة إحصائيات الطلبات</li>
+                </ul>
+            </div>
+
+            <div class="instruction-item">
+                <h4>🔍 البحث والتصفية</h4>
+                <ul>
+                    <li>استخدم مربع البحث للبحث بالاسم أو الرقم القومي</li>
+                    <li>اختر حالة الطلب من القائمة المنسدلة</li>
+                    <li>اختر نوع الخدمة للتصفية</li>
+                    <li>اضغط "بحث" لتطبيق المرشحات</li>
+                </ul>
+            </div>
+
+            <div class="success-box">
+                <strong>💡 معلومة مهمة:</strong> جميع البيانات محفوظة محلياً في المتصفح ولن تفقد عند إغلاق الصفحة
+            </div>
+        </div>
+
+        <!-- Login Form -->
+        <div class="login-form show" id="loginForm">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #e60012;">تسجيل الدخول</h2>
+            <div class="form-group">
+                <label>اسم المستخدم:</label>
+                <input type="text" id="username" placeholder="أدخل اسم المستخدم">
+            </div>
+            <div class="form-group">
+                <label>كلمة المرور:</label>
+                <input type="password" id="password" placeholder="أدخل كلمة المرور">
+            </div>
+            <div style="text-align: center;">
+                <button class="btn" onclick="login()">تسجيل الدخول</button>
+            </div>
+            <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; font-size: 14px;">
+        
+            </div>
+        </div>
+
+        <!-- Employee Panel -->
+        <div class="employee-panel" id="employeePanel">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h2 style="color: #e60012; margin: 0;">إدخال بيانات العميل</h2>
+                <div>
+                    <button type="button" class="btn btn-warning" onclick="showNotifications()" id="notificationBtn">الإشعارات (0)</button>
+                    <button type="button" class="btn btn-info" onclick="showMyRequests()">طلباتي (0)</button>
+                </div>
+            </div>
+            
+            <!-- Notifications Section -->
+            <div id="notificationsSection" style="display: none; margin-bottom: 30px;">
+                <div style="background: #fff3cd; padding: 20px; border-radius: 10px; border: 2px solid #ffc107;">
+                    <h3 style="color: #856404; margin-bottom: 20px;">🔔 الإشعارات</h3>
+                    <div id="notificationsList">
+                        <!-- Notifications will be populated here -->
+                    </div>
+                    <div style="text-align: center; margin-top: 15px;">
+                        <button type="button" class="btn btn-secondary" onclick="hideNotifications()">إخفاء الإشعارات</button>
+                        <button type="button" class="btn btn-warning" onclick="markAllAsRead()">تعيين الكل كمقروء</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- My Requests Section -->
+            <div id="myRequestsSection" style="display: none; margin-bottom: 30px;">
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; border: 2px solid #e60012;">
+                    <h3 style="color: #e60012; margin-bottom: 20px;">📋 طلباتي المرفوعة</h3>
+                    <table class="data-table" id="myRequestsTable">
+                        <thead>
+                            <tr>
+                                <th>رقم الطلب</th>
+                                <th>الاسم</th>
+                                <th>الرقم القومي</th>
+                                <th>رقم الهاتف</th>
+                                <th>نوع الخدمة</th>
+                                <th>تاريخ الطلب</th>
+                                <th>المستندات</th>
+                                <th>الحالة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="myRequestsTableBody">
+                            <!-- Employee's requests will be populated here -->
+                        </tbody>
+                    </table>
+                    <div style="text-align: center; margin-top: 15px;">
+                        <button type="button" class="btn btn-secondary" onclick="hideMyRequests()">إخفاء طلباتي</button>
+                    </div>
+                </div>
+            </div>
+            
+            <form id="customerForm">
+                <div class="form-group">
+                    <label>الاسم الكامل:</label>
+                    <input type="text" id="customerName" required placeholder="أدخل الاسم الكامل">
+                </div>
+                <div class="form-group">
+                    <label>الرقم القومي:</label>
+                    <input type="text" id="nationalId" required placeholder="أدخل الرقم القومي (14 رقم)" maxlength="14">
+                </div>
+                <div class="form-group">
+                    <label>رقم الهاتف:</label>
+                    <input type="tel" id="phoneNumber" required placeholder="أدخل رقم الهاتف">
+                </div>
+                <div class="form-group">
+                    <label>العنوان:</label>
+                    <textarea id="address" required placeholder="أدخل العنوان الكامل" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>نوع الخدمة:</label>
+                    <select id="serviceType" required>
+                        <option value="">اختر نوع الخدمة</option>
+                        <option value="خط جديد">خط جديد</option>
+                        <option value="تجديد خط">تجديد خط</option>
+                        <option value=">تحديث بينات/option>
+                        <option value="إلغاء خط">إلغاء خط</option>
+                        <option value="خدمة إنترنت">خدمة إنترنت</option>
+                        <option value="أخرى">أخرى</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>ملاحظات:</label>
+                    <textarea id="notes" placeholder="أي ملاحظات إضافية" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>📎 رفع البطاقة الشخصية والمستندات المطلوبة:</label>
+                    <div class="highlight-box" style="margin-bottom: 15px;">
+                        <strong>المستندات المطلوبة:</strong><br>
+                        🆔 البطاقة الشخصية (وجه وظهر) - صورة واضحة<br>
+                        🏠 إثبات العنوان (فاتورة كهرباء/مياه/غاز حديثة)<br>
+                        📄 أي مستندات إضافية حسب نوع الخدمة
+                    </div>
+                    <div class="file-upload-area" id="fileUploadArea">
+                        <input type="file" id="documents" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" style="display: none;">
+                        <div onclick="document.getElementById('documents').click()" style="cursor: pointer;">
+                            <div style="font-size: 48px; color: #e60012; margin-bottom: 10px;">📁</div>
+                            <p style="font-size: 18px; margin-bottom: 10px; color: #e60012; font-weight: bold;">اضغط هنا لرفع الملفات</p>
+                            <p style="font-size: 14px; color: #666;">أو اسحب الملفات هنا مباشرة</p>
+                            <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 15px;">
+                                <p style="font-size: 12px; color: #666; margin: 2px 0;">📋 الصيغ المدعومة: JPG, PNG, PDF, DOC, DOCX</p>
+                                <p style="font-size: 12px; color: #666; margin: 2px 0;">📊 الحد الأقصى: 5 ملفات، كل ملف أقل من 5 ميجابايت</p>
+                                <p style="font-size: 12px; color: #e60012; margin: 2px 0;">⚠️ تأكد من وضوح الصور وجودة المستندات</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="file-list" id="filesList"></div>
+                </div>
+                <div style="text-align: center;">
+                    <button type="submit" class="btn">حفظ البيانات</button>
+                    <button type="reset" class="btn btn-secondary">مسح البيانات</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Admin Panel -->
+        <div class="admin-panel" id="adminPanel">
+            <h2 style="color: #e60012; margin-bottom: 30px;">لوحة إدارة الطلبات</h2>
+            
+            <!-- User Management Section -->
+            <div class="user-management-section" style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
+                <h3 style="color: #e60012; margin-bottom: 20px;">إدارة المستخدمين</h3>
+                
+                <!-- Add New User Form -->
+                <div class="add-user-form" style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 15px;">إضافة موظف جديد</h4>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: end;">
+                        <div class="form-group" style="margin-bottom: 0; min-width: 200px;">
+                            <label>اسم المستخدم:</label>
+                            <input type="text" id="newUsername" placeholder="اسم المستخدم" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; width: 100%;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0; min-width: 200px;">
+                            <label>كلمة المرور:</label>
+                            <input type="password" id="newPassword" placeholder="كلمة المرور" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; width: 100%;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0; min-width: 200px;">
+                            <label>الاسم الكامل:</label>
+                            <input type="text" id="newFullName" placeholder="الاسم الكامل" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; width: 100%;">
+                        </div>
+                        <button onclick="addNewUser()" class="btn" style="height: 40px;">إضافة موظف</button>
+                    </div>
+                </div>
+                
+                <!-- Current Users List -->
+                <div class="users-list" style="background: white; padding: 20px; border-radius: 8px;">
+                    <h4 style="margin-bottom: 15px;">الموظفين الحاليين</h4>
+                    <table class="data-table" id="usersTable" style="margin-bottom: 0;">
+                        <thead>
+                            <tr>
+                                <th>اسم المستخدم</th>
+                                <th>الاسم الكامل</th>
+                                <th>الدور</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- Users will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Search and Filter -->
+            <div class="search-filter">
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label>البحث:</label>
+                        <input type="text" id="searchInput" placeholder="البحث بالاسم أو الرقم القومي أو رقم الطلب" onkeyup="filterRequests()">
+                    </div>
+                    <div class="filter-group">
+                        <label>فلترة بالحالة:</label>
+                        <select id="statusFilter" onchange="filterRequests()">
+                            <option value="">جميع الحالات</option>
+                            <option value="قيد المراجعة">قيد المراجعة</option>
+                            <option value="مقبول">مقبول</option>
+                            <option value="مرفوض">مرفوض</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>فلترة بنوع الخدمة:</label>
+                        <select id="serviceFilter" onchange="filterRequests()">
+                            <option value="">جميع الخدمات</option>
+                            <option value="خط جديد">خط جديد</option>
+                            <option value="تجديد خط">تجديد خط</option>
+                            <option value="نقل ملكية">نقل ملكية</option>
+                            <option value="إلغاء خط">إلغاء خط</option>
+                            <option value="خدمة إنترنت">خدمة إنترنت</option>
+                            <option value="أخرى">أخرى</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <span style="font-weight: bold;">إجمالي الطلبات: </span><span id="totalRequests">0</span>
+                <span style="margin-right: 20px; font-weight: bold;">قيد المراجعة: </span><span id="pendingRequests">0</span>
+                <span style="margin-right: 20px; font-weight: bold;">مقبول: </span><span id="approvedRequests">0</span>
+            </div>
+
+            <table class="data-table" id="requestsTable">
+                <thead>
+                    <tr>
+                        <th>رقم الطلب</th>
+                        <th>الاسم</th>
+                        <th>الرقم القومي</th>
+                        <th>رقم الهاتف</th>
+                        <th>نوع الخدمة</th>
+                        <th>الموظف المسؤول</th>
+                        <th>تاريخ الطلب</th>
+                        <th>المستندات</th>
+                        <th>الحالة</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="requestsTableBody">
+                    <!-- Data will be populated here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Documents Modal -->
+        <div id="documentsModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeDocumentsModal()">&times;</span>
+                <h2 style="color: #e60012; margin-bottom: 20px;">المستندات المرفقة</h2>
+                <div id="documentsContainer"></div>
+            </div>
+        </div>
+
+        <!-- Alert Messages -->
+        <div id="alertContainer"></div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentUser = null;
+        let customerRequests = JSON.parse(localStorage.getItem('customerRequests')) || [];
+        let uploadedFiles = [];
+        let requestCounter = parseInt(localStorage.getItem('requestCounter') || '1000'); // بداية من رقم 1000
+        
+        // User credentials - Load from localStorage or use defaults
+        let users = JSON.parse(localStorage.getItem('systemUsers')) || {
+            'admin': { password: 'admin123', role: 'admin', name: 'المدير العام' }
+        };
+        
+        // Save users to localStorage
+        function saveUsers() {
+            localStorage.setItem('systemUsers', JSON.stringify(users));
+        }
+
+        // Login function
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (users[username] && users[username].password === password) {
+                currentUser = {
+                    username: username,
+                    role: users[username].role,
+                    name: users[username].name
+                };
+                
+                document.getElementById('loginForm').classList.remove('show');
+                document.getElementById('navBar').classList.add('show');
+                document.getElementById('userInfo').innerHTML = `مرحباً ${currentUser.name} (${currentUser.role === 'admin' ? 'مدير' : 'موظف'})`;
+                
+                if (currentUser.role === 'admin') {
+                    document.getElementById('adminBtn').style.display = 'inline-block';
+                    showAdminPanel();
+                } else {
+                    showEmployeePanel();
+                }
+                
+                showAlert('تم تسجيل الدخول بنجاح', 'success');
+            } else {
+                showAlert('اسم المستخدم أو كلمة المرور غير صحيحة', 'error');
+            }
+        }
+
+        // Logout function
+        function logout() {
+            currentUser = null;
+            uploadedFiles = [];
+            document.getElementById('loginForm').classList.add('show');
+            document.getElementById('navBar').classList.remove('show');
+            document.getElementById('employeePanel').classList.remove('show');
+            document.getElementById('adminPanel').classList.remove('show');
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('filesList').innerHTML = '';
+            showAlert('تم تسجيل الخروج بنجاح', 'success');
+        }
+
+        // Show employee panel
+        function showEmployeePanel() {
+            document.getElementById('employeePanel').classList.add('show');
+            document.getElementById('adminPanel').classList.remove('show');
+            document.getElementById('instructionsPanel').style.display = 'none';
+        }
+
+        // Show admin panel
+        function showAdminPanel() {
+            if (currentUser && currentUser.role === 'admin') {
+                document.getElementById('adminPanel').classList.add('show');
+                document.getElementById('employeePanel').classList.remove('show');
+                document.getElementById('instructionsPanel').style.display = 'none';
+                loadRequests();
+            }
+        }
+
+        // Show instructions panel
+        function showInstructions() {
+            document.getElementById('instructionsPanel').style.display = 'block';
+            document.getElementById('employeePanel').classList.remove('show');
+            document.getElementById('adminPanel').classList.remove('show');
+        }
+
+        // Show employee's own requests
+        function showMyRequests() {
+            if (!currentUser || currentUser.role === 'admin') return;
+            
+            const myRequests = customerRequests.filter(req => req.employeeUsername === currentUser.username);
+            const tableBody = document.getElementById('myRequestsTableBody');
+            tableBody.innerHTML = '';
+            
+            myRequests.forEach(request => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${request.requestNumber || 'VF-' + (request.id % 10000)}</td>
+                    <td>${request.name}</td>
+                    <td>${request.nationalId}</td>
+                    <td>${request.phone}</td>
+                    <td>${request.serviceType}</td>
+                    <td>${request.date}</td>
+                    <td>
+                        ${request.documents && request.documents.length > 0 ? 
+                            `<button class="btn btn-info" onclick="viewDocuments(${request.id})" style="padding: 5px 10px; font-size: 12px;">عرض (${request.documents.length})</button>` : 
+                            '<span style="color: #999;">لا توجد</span>'
+                        }
+                    </td>
+                    <td><span class="status-${request.status === 'قيد المراجعة' ? 'pending' : request.status === 'مقبول' ? 'approved' : 'rejected'}">${request.status}</span></td>
+                    <td>
+                        <button class="btn btn-secondary" onclick="viewRequestDetails(${request.id})" style="padding: 5px 10px; font-size: 12px;">التفاصيل</button>
+                        ${request.status === 'قيد المراجعة' ? 
+                            `<button class="btn btn-danger" onclick="deleteMyRequest(${request.id})" style="padding: 5px 10px; font-size: 12px; margin-right: 5px;">حذف</button>` : 
+                            ''
+                        }
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            document.getElementById('myRequestsSection').style.display = 'block';
+            updateMyRequestsCounter();
+        }
+
+        // Hide employee's requests section
+        function hideMyRequests() {
+            document.getElementById('myRequestsSection').style.display = 'none';
+        }
+
+        // Delete employee's own request (only if pending)
+        function deleteMyRequest(requestId) {
+            const request = customerRequests.find(req => req.id === requestId);
+            if (request && request.employeeUsername === currentUser.username && request.status === 'قيد المراجعة') {
+                if (confirm('هل أنت متأكد من حذف هذا الطلب؟')) {
+                    const requestIndex = customerRequests.findIndex(req => req.id === requestId);
+                    customerRequests.splice(requestIndex, 1);
+                    localStorage.setItem('customerRequests', JSON.stringify(customerRequests));
+                    showMyRequests(); // Refresh the list
+                    updateMyRequestsCounter();
+                    showAlert('تم حذف الطلب بنجاح', 'success');
+                }
+            } else {
+                showAlert('لا يمكن حذف هذا الطلب', 'error');
+            }
+        }
+
+        // Update my requests counter
+        function updateMyRequestsCounter() {
+            if (currentUser && currentUser.role !== 'admin') {
+                const myRequests = customerRequests.filter(req => req.employeeUsername === currentUser.username);
+                const button = document.querySelector('button[onclick="showMyRequests()"]');
+                if (button) {
+                    button.textContent = `طلباتي (${myRequests.length})`;
+                }
+            }
+        }
+
+        // File upload handling
+        document.getElementById('documents').addEventListener('change', handleFileSelect);
+        
+        function handleFileSelect(event) {
+            const files = event.target.files;
+            processFiles(files);
+        }
+        
+        function processFiles(files) {
+            if (files.length > 5) {
+                showAlert('لا يمكن رفع أكثر من 5 ملفات', 'error');
+                return;
+            }
+            
+            uploadedFiles = [];
+            const filesList = document.getElementById('filesList');
+            filesList.innerHTML = '';
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                
+                if (file.size > 5 * 1024 * 1024) {
+                    showAlert(`حجم الملف ${file.name} كبير جداً (الحد الأقصى 5 ميجابايت)`, 'error');
+                    continue;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const fileData = {
+                        name: file.name,
+                        type: file.type,
+                        size: file.size,
+                        data: e.target.result,
+                        uploadDate: new Date().toISOString()
+                    };
+                    
+                    uploadedFiles.push(fileData);
+                    displayFileItem(fileData, uploadedFiles.length - 1);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        function displayFileItem(fileData, index) {
+            const filesList = document.getElementById('filesList');
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            
+            const fileIcon = getFileIcon(fileData.type);
+            const fileSize = (fileData.size / 1024).toFixed(1) + ' KB';
+            
+            fileItem.innerHTML = `
+                <div class="file-info">
+                    <span class="file-icon">${fileIcon}</span>
+                    <div>
+                        <div style="font-weight: bold;">${fileData.name}</div>
+                        <div style="font-size: 12px; color: #666;">${fileSize}</div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-danger" onclick="removeFile(${index})" style="padding: 5px 10px; font-size: 12px;">حذف</button>
+            `;
+            
+            filesList.appendChild(fileItem);
+        }
+        
+        function getFileIcon(fileType) {
+            if (fileType.startsWith('image/')) return '🖼️';
+            if (fileType === 'application/pdf') return '📄';
+            if (fileType.includes('word')) return '📝';
+            return '📎';
+        }
+        
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1);
+            updateFilesList();
+        }
+        
+        function updateFilesList() {
+            const filesList = document.getElementById('filesList');
+            filesList.innerHTML = '';
+            uploadedFiles.forEach((fileData, index) => {
+                displayFileItem(fileData, index);
+            });
+        }
+
+        // Drag and drop functionality
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        
+        fileUploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            fileUploadArea.classList.add('dragover');
+        });
+        
+        fileUploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            fileUploadArea.classList.remove('dragover');
+        });
+        
+        fileUploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            fileUploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            processFiles(files);
+        });
+
+        // Handle customer form submission
+        document.getElementById('customerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // إنشاء رقم طلب جديد
+            requestCounter++;
+            const requestNumber = `VF-${requestCounter}`;
+            
+            const customerData = {
+                id: Date.now(),
+                requestNumber: requestNumber,
+                name: document.getElementById('customerName').value,
+                nationalId: document.getElementById('nationalId').value,
+                phone: document.getElementById('phoneNumber').value,
+                address: document.getElementById('address').value,
+                serviceType: document.getElementById('serviceType').value,
+                notes: document.getElementById('notes').value,
+                documents: [...uploadedFiles],
+                employee: currentUser.name,
+                employeeUsername: currentUser.username,
+                date: new Date().toLocaleDateString('ar-EG'),
+                status: 'قيد المراجعة'
+            };
+            
+            // Validate national ID
+            if (customerData.nationalId.length !== 14) {
+                showAlert('الرقم القومي يجب أن يكون 14 رقم', 'error');
+                return;
+            }
+            
+            // Check for duplicate national ID
+            const existingRequest = customerRequests.find(req => req.nationalId === customerData.nationalId);
+            if (existingRequest) {
+                showAlert('هذا الرقم القومي مسجل مسبقاً', 'error');
+                return;
+            }
+            
+            customerRequests.push(customerData);
+            localStorage.setItem('customerRequests', JSON.stringify(customerRequests));
+            localStorage.setItem('requestCounter', requestCounter.toString());
+            
+            showAlert(`تم حفظ بيانات العميل بنجاح${uploadedFiles.length > 0 ? ' مع ' + uploadedFiles.length + ' مستند مرفق' : ''}`, 'success');
+            document.getElementById('customerForm').reset();
+            document.getElementById('filesList').innerHTML = '';
+            uploadedFiles = [];
+        });
+
+        // Load requests in admin panel
+        function loadRequests() {
+            const tableBody = document.getElementById('requestsTableBody');
+            tableBody.innerHTML = '';
+            
+            customerRequests.forEach(request => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${request.requestNumber || 'VF-' + (request.id % 10000)}</td>
+                    <td>${request.name}</td>
+                    <td>${request.nationalId}</td>
+                    <td>${request.phone}</td>
+                    <td>${request.serviceType}</td>
+                    <td>${request.employee}</td>
+                    <td>${request.date}</td>
+                    <td>
+                        ${request.documents && request.documents.length > 0 ? 
+                            `<button class="btn btn-info" onclick="viewDocuments(${request.id})" style="padding: 5px 10px; font-size: 12px;">عرض (${request.documents.length})</button>` : 
+                            '<span style="color: #999;">لا توجد</span>'
+                        }
+                    </td>
+                    <td><span class="status-${request.status === 'قيد المراجعة' ? 'pending' : request.status === 'مقبول' ? 'approved' : 'rejected'}">${request.status}</span></td>
+                    <td>
+                        ${request.status === 'قيد المراجعة' ? `
+                            <button class="btn btn-success" onclick="updateRequestStatus(${request.id}, 'مقبول')" style="padding: 5px 10px; font-size: 12px;">قبول</button>
+                            <button class="btn btn-danger" onclick="updateRequestStatus(${request.id}, 'مرفوض')" style="padding: 5px 10px; font-size: 12px;">رفض</button>
+                        ` : ''}
+                        <button class="btn btn-secondary" onclick="viewRequestDetails(${request.id})" style="padding: 5px 10px; font-size: 12px;">التفاصيل</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            updateRequestsStats();
+        }
+
+        // View documents
+        function viewDocuments(requestId) {
+            const request = customerRequests.find(req => req.id === requestId);
+            if (request && request.documents && request.documents.length > 0) {
+                const modal = document.getElementById('documentsModal');
+                const container = document.getElementById('documentsContainer');
+                
+                container.innerHTML = '';
+                
+                request.documents.forEach((doc, index) => {
+                    const docDiv = document.createElement('div');
+                    docDiv.className = 'document-viewer';
+                    
+                    if (doc.type.startsWith('image/')) {
+                        docDiv.innerHTML = `
+                            <h4>${doc.name}</h4>
+                            <img src="${doc.data}" alt="${doc.name}" onclick="window.open('${doc.data}', '_blank')" style="cursor: pointer;">
+                            <p style="font-size: 12px; color: #666; margin-top: 10px;">اضغط على الصورة لفتحها في نافذة جديدة</p>
+                        `;
+                    } else {
+                        const fileIcon = getFileIcon(doc.type);
+                        const fileSize = (doc.size / 1024).toFixed(1) + ' KB';
+                        docDiv.innerHTML = `
+                            <div style="padding: 20px; border: 2px solid #ddd; border-radius: 8px; margin: 10px 0;">
+                                <div style="font-size: 48px; margin-bottom: 10px;">${fileIcon}</div>
+                                <h4>${doc.name}</h4>
+                                <p style="color: #666;">${fileSize}</p>
+                                <button class="btn btn-info" onclick="downloadFile('${doc.data}', '${doc.name}')">تحميل الملف</button>
+                            </div>
+                        `;
+                    }
+                    
+                    container.appendChild(docDiv);
+                });
+                
+                modal.style.display = 'block';
+            }
+        }
+        
+        function downloadFile(dataUrl, filename) {
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = filename;
+            link.click();
+        }
+        
+        function closeDocumentsModal() {
+            document.getElementById('documentsModal').style.display = 'none';
+        }
+
+        // Update request status
+        function updateRequestStatus(requestId, newStatus) {
+            const requestIndex = customerRequests.findIndex(req => req.id === requestId);
+            if (requestIndex !== -1) {
+                const request = customerRequests[requestIndex];
+                request.status = newStatus;
+                request.reviewDate = new Date().toLocaleDateString('ar-EG');
+                request.reviewedBy = currentUser.name;
+                
+                // Send notification to employee if request is approved
+                if (newStatus === 'مقبول') {
+                    sendNotificationToEmployee(request);
+                }
+                
+                localStorage.setItem('customerRequests', JSON.stringify(customerRequests));
+                loadRequests();
+                showAlert(`تم ${newStatus === 'مقبول' ? 'قبول' : 'رفض'} الطلب بنجاح`, 'success');
+            }
+        }
+        
+        // Send notification to employee
+        function sendNotificationToEmployee(request) {
+            // Get existing notifications or create empty array
+            let notifications = JSON.parse(localStorage.getItem('employeeNotifications') || '[]');
+            
+            // Create new notification
+            const notification = {
+                id: Date.now(),
+                employeeUsername: request.employeeUsername,
+                message: `تم قبول طلب العميل ${request.name} (الرقم القومي: ${request.nationalId}) من قبل المدير العام`,
+                requestId: request.id,
+                date: new Date().toLocaleDateString('ar-EG'),
+                time: new Date().toLocaleTimeString('ar-EG'),
+                read: false
+            };
+            
+            notifications.push(notification);
+            localStorage.setItem('employeeNotifications', JSON.stringify(notifications));
+            
+            // Update notification counter for the specific employee
+            updateNotificationCounter();
+        }
+
+        // View request details
+        function viewRequestDetails(requestId) {
+            const request = customerRequests.find(req => req.id === requestId);
+            if (request) {
+                const documentsInfo = request.documents && request.documents.length > 0 ? 
+                    `\nالمستندات المرفقة: ${request.documents.length} ملف` : 
+                    '\nالمستندات المرفقة: لا توجد';
+                    
+                alert(`تفاصيل الطلب:\n\nالاسم: ${request.name}\nالرقم القومي: ${request.nationalId}\nرقم الهاتف: ${request.phone}\nالعنوان: ${request.address}\nنوع الخدمة: ${request.serviceType}\nالملاحظات: ${request.notes || 'لا توجد'}${documentsInfo}\nالموظف المسؤول: ${request.employee}\nتاريخ الطلب: ${request.date}\nالحالة: ${request.status}${request.reviewDate ? '\nتاريخ المراجعة: ' + request.reviewDate : ''}${request.reviewedBy ? '\nتمت المراجعة بواسطة: ' + request.reviewedBy : ''}`);
+            }
+        }
+
+        // Filter requests
+        function filterRequests() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const serviceFilter = document.getElementById('serviceFilter').value;
+            
+            const filteredRequests = customerRequests.filter(request => {
+                const requestNumber = request.requestNumber || 'VF-' + (request.id % 10000);
+                const matchesSearch = request.name.toLowerCase().includes(searchTerm) || 
+                                    request.nationalId.includes(searchTerm) ||
+                                    requestNumber.toLowerCase().includes(searchTerm);
+                const matchesStatus = !statusFilter || request.status === statusFilter;
+                const matchesService = !serviceFilter || request.serviceType === serviceFilter;
+                
+                return matchesSearch && matchesStatus && matchesService;
+            });
+            
+            const tableBody = document.getElementById('requestsTableBody');
+            tableBody.innerHTML = '';
+            
+            filteredRequests.forEach(request => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${request.requestNumber || 'VF-' + (request.id % 10000)}</td>
+                    <td>${request.name}</td>
+                    <td>${request.nationalId}</td>
+                    <td>${request.phone}</td>
+                    <td>${request.serviceType}</td>
+                    <td>${request.employee}</td>
+                    <td>${request.date}</td>
+                    <td>
+                        ${request.documents && request.documents.length > 0 ? 
+                            `<button class="btn btn-info" onclick="viewDocuments(${request.id})" style="padding: 5px 10px; font-size: 12px;">عرض (${request.documents.length})</button>` : 
+                            '<span style="color: #999;">لا توجد</span>'
+                        }
+                    </td>
+                    <td><span class="status-${request.status === 'قيد المراجعة' ? 'pending' : request.status === 'مقبول' ? 'approved' : 'rejected'}">${request.status}</span></td>
+                    <td>
+                        ${request.status === 'قيد المراجعة' ? `
+                            <button class="btn btn-success" onclick="updateRequestStatus(${request.id}, 'مقبول')" style="padding: 5px 10px; font-size: 12px;">قبول</button>
+                            <button class="btn btn-danger" onclick="updateRequestStatus(${request.id}, 'مرفوض')" style="padding: 5px 10px; font-size: 12px;">رفض</button>
+                        ` : ''}
+                        <button class="btn btn-secondary" onclick="viewRequestDetails(${request.id})" style="padding: 5px 10px; font-size: 12px;">التفاصيل</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Update requests statistics
+        function updateRequestsStats() {
+            const total = customerRequests.length;
+            const pending = customerRequests.filter(req => req.status === 'قيد المراجعة').length;
+            const approved = customerRequests.filter(req => req.status === 'مقبول').length;
+            
+            document.getElementById('totalRequests').textContent = total;
+            document.getElementById('pendingRequests').textContent = pending;
+            document.getElementById('approvedRequests').textContent = approved;
+        }
+
+        // Show alert messages
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type === 'success' ? 'success' : 'error'}`;
+            alert.textContent = message;
+            
+            alertContainer.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        // Validate national ID input
+        document.getElementById('nationalId').addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        });
+
+        // Validate phone number input
+        document.getElementById('phoneNumber').addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/[^0-9+]/g, '');
+        });
+        
+        // Notification functions
+        function showNotifications() {
+            if (currentUser && currentUser.role !== 'admin') {
+                const notifications = JSON.parse(localStorage.getItem('employeeNotifications') || '[]');
+                const userNotifications = notifications.filter(notif => notif.employeeUsername === currentUser.username);
+                
+                const notificationsList = document.getElementById('notificationsList');
+                notificationsList.innerHTML = '';
+                
+                if (userNotifications.length === 0) {
+                    notificationsList.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">لا توجد إشعارات جديدة</p>';
+                } else {
+                    userNotifications.forEach(notification => {
+                        const notifDiv = document.createElement('div');
+                        notifDiv.className = `notification-item ${notification.read ? 'read' : 'unread'}`;
+                        notifDiv.style.cssText = `
+                            padding: 15px;
+                            margin-bottom: 10px;
+                            border-radius: 8px;
+                            border-left: 4px solid ${notification.read ? '#28a745' : '#ffc107'};
+                            background: ${notification.read ? '#f8f9fa' : '#fff3cd'};
+                        `;
+                        
+                        notifDiv.innerHTML = `
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div style="flex: 1;">
+                                    <p style="margin: 0 0 5px 0; font-weight: bold; color: #333;">${notification.message}</p>
+                                    <small style="color: #666;">${notification.date} - ${notification.time}</small>
+                                </div>
+                                <button onclick="markAsRead(${notification.id})" class="btn btn-sm" style="padding: 2px 8px; font-size: 11px; ${notification.read ? 'display: none;' : ''}">
+                                    تعيين كمقروء
+                                </button>
+                            </div>
+                        `;
+                        
+                        notificationsList.appendChild(notifDiv);
+                    });
+                }
+                
+                document.getElementById('notificationsSection').style.display = 'block';
+            }
+        }
+        
+        function hideNotifications() {
+            document.getElementById('notificationsSection').style.display = 'none';
+        }
+        
+        function markAsRead(notificationId) {
+            let notifications = JSON.parse(localStorage.getItem('employeeNotifications') || '[]');
+            const notificationIndex = notifications.findIndex(notif => notif.id === notificationId);
+            
+            if (notificationIndex !== -1) {
+                notifications[notificationIndex].read = true;
+                localStorage.setItem('employeeNotifications', JSON.stringify(notifications));
+                updateNotificationCounter();
+                showNotifications(); // Refresh the display
+            }
+        }
+        
+        function markAllAsRead() {
+            if (currentUser && currentUser.role !== 'admin') {
+                let notifications = JSON.parse(localStorage.getItem('employeeNotifications') || '[]');
+                
+                // Mark all notifications for current user as read
+                notifications.forEach(notification => {
+                    if (notification.username === currentUser.username) {
+                        notification.read = true;
+                    }
+                });
+                
+                localStorage.setItem('employeeNotifications', JSON.stringify(notifications));
+                updateNotificationCounter();
+                showNotifications(); // Refresh the display
+            }
+        }
+        
+        // User Management Functions
+        function addNewUser() {
+            const username = document.getElementById('newUsername').value.trim();
+            const password = document.getElementById('newPassword').value.trim();
+            const fullName = document.getElementById('newFullName').value.trim();
+            
+            if (!username || !password || !fullName) {
+                showAlert('يرجى ملء جميع الحقول', 'error');
+                return;
+            }
+            
+            if (users[username]) {
+                showAlert('اسم المستخدم موجود بالفعل', 'error');
+                return;
+            }
+            
+            if (username.length < 3) {
+                showAlert('اسم المستخدم يجب أن يكون 3 أحرف على الأقل', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showAlert('كلمة المرور يجب أن تكون 6 أحرف على الأقل', 'error');
+                return;
+            }
+            
+            // Add new user
+            users[username] = {
+                password: password,
+                role: 'employee',
+                name: fullName
+            };
+            
+            saveUsers();
+            loadUsersList();
+            
+            // Clear form
+            document.getElementById('newUsername').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('newFullName').value = '';
+            
+            showAlert('تم إضافة الموظف بنجاح', 'success');
+        }
+        
+        function editUser(username) {
+            if (username === 'admin') {
+                showAlert('لا يمكن تعديل حساب المدير', 'error');
+                return;
+            }
+            
+            const user = users[username];
+            const newName = prompt('الاسم الكامل الجديد:', user.name);
+            const newPassword = prompt('كلمة المرور الجديدة (اتركها فارغة للاحتفاظ بالحالية):');
+            
+            if (newName !== null && newName.trim() !== '') {
+                users[username].name = newName.trim();
+                
+                if (newPassword && newPassword.trim() !== '') {
+                    if (newPassword.length < 6) {
+                        showAlert('كلمة المرور يجب أن تكون 6 أحرف على الأقل', 'error');
+                        return;
+                    }
+                    users[username].password = newPassword.trim();
+                }
+                
+                saveUsers();
+                loadUsersList();
+                showAlert('تم تعديل بيانات المستخدم بنجاح', 'success');
+            }
+        }
+        
+        function deleteUser(username) {
+            if (username === 'admin') {
+                showAlert('لا يمكن حذف حساب المدير', 'error');
+                return;
+            }
+            
+            if (confirm(`هل أنت متأكد من حذف المستخدم: ${users[username].name}؟`)) {
+                delete users[username];
+                saveUsers();
+                loadUsersList();
+                showAlert('تم حذف المستخدم بنجاح', 'success');
+            }
+        }
+        
+        function loadUsersList() {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+            
+            Object.keys(users).forEach(username => {
+                const user = users[username];
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${username}</td>
+                    <td>${user.name}</td>
+                    <td>${user.role === 'admin' ? 'مدير' : 'موظف'}</td>
+                    <td>
+                        ${username !== 'admin' ? 
+                            `<button onclick="editUser('${username}')" class="btn" style="background: #007bff; color: white; padding: 5px 10px; font-size: 12px; margin-left: 5px;">تعديل</button>
+                             <button onclick="deleteUser('${username}')" class="btn btn-danger" style="background: #dc3545; padding: 5px 10px; font-size: 12px;">حذف</button>` : 
+                            '<span style="color: #666;">لا يمكن حذفه</span>'
+                        }
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Update showAdminPanel function to load users list
+        const originalShowAdminPanel = showAdminPanel;
+        showAdminPanel = function() {
+            if (currentUser && currentUser.role === 'admin') {
+                originalShowAdminPanel();
+                loadUsersList();
+            }
+        };
+        
+        // Initialize users list when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            if (currentUser && currentUser.role === 'admin') {
+                loadUsersList();
+            }
+        });
+        
+        // Complete markAllAsRead function
+        function completeMarkAllAsRead() {
+            if (currentUser && currentUser.role !== 'admin') {
+                let notifications = JSON.parse(localStorage.getItem('employeeNotifications') || '[]');
+                
+                notifications.forEach(notification => {
+                    if (notification.employeeUsername === currentUser.username) {
+                        notification.read = true;
+                    }
+                });
+                
+                localStorage.setItem('employeeNotifications', JSON.stringify(notifications));
+                updateNotificationCounter();
+                showNotifications(); // Refresh the display
+                showAlert('تم تعيين جميع الإشعارات كمقروءة', 'success');
+            }
+        }
+        
+        function updateNotificationCounter() {
+            if (currentUser && currentUser.role !== 'admin') {
+                const notifications = JSON.parse(localStorage.getItem('employeeNotifications') || '[]');
+                const unreadCount = notifications.filter(notif => 
+                    notif.employeeUsername === currentUser.username && !notif.read
+                ).length;
+                
+                const notificationBtn = document.getElementById('notificationBtn');
+                if (notificationBtn) {
+                    notificationBtn.textContent = `الإشعارات (${unreadCount})`;
+                    notificationBtn.style.backgroundColor = unreadCount > 0 ? '#dc3545' : '#ffc107';
+                }
+            }
+        }
+
+        // Enter key login
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && document.getElementById('loginForm').classList.contains('show')) {
+                login();
+            }
+        });
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('documentsModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
